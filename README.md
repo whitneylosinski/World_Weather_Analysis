@@ -252,20 +252,3 @@ This analysis was completed in three major steps which are described below.
     fig    
     ```
     ![Travel_Map_Markers](Vacation_Itinerary/WeatherPy_travel_map_markers.png)
- 
- ## Summary
-Create scatter plots of the weather data for the following comparisons:
- - Latitude versus temperature
- - Latitude versus humidity
- - Latitude versus cloudiness
- - Latitude versus wind speed
-Determine the correlations for the following weather data:
- - Latitude and temperature
- - Latitude and humidity
- - Latitude and cloudiness
- - Latitude and wind speed
-Create a series of heatmaps using the Google Maps and Places API that showcases the following:
- - Latitude and temperature
- - Latitude and humidity
- - Latitude and cloudiness
- - Latitude and wind speed
