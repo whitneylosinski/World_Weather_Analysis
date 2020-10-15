@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A coworker at PlanMyTrip requested help in collecting and analyzing weather data across over 500 cities worldwide to be used for recommending ideal hotels to their customers based on the clients' weather preferences.  Specifically, the coworker requested that the Google Maps and Places API and Search Nearby features be used to create a heat map that displays the following information about each city:
+A coworker at PlanMyTrip requested help in collecting and analyzing weather data across over 500 cities worldwide to be used for recommending ideal hotels to their customers based on the clients' weather preferences.  Specifically, the coworker requested that the Google Maps and Places API and Search Nearby features be used to create a travel destinations map and travel itinerary map which display the following information about each city:
 
 1. Name of a Hotel in the City
 2. City Name
@@ -107,7 +107,7 @@ This analysis was completed in three major steps which are described below.
     city_data_df = pd.DataFrame(city_data)
     ```
 
-2. ) **Creating the Customer Travel Destinations Map:**
+2. ) **Creating the Travel Destinations Map:**
     The second step of the project was to create a map that shows the clients all of the possible travel destinations within their specified weather preferences, from the `city_data_df` DataFrame generated in the first step and to also display a hotel in each city on the map.  To do this, the client first needs to be able to select their weather preferences.  This was accomplished by creating two input boxes which ask the client what minimum and maximum temperatures they would like for their trip.  See the script below.
     ```py
     # Prompt the user to enter minimum and maximum temperature criteria 
@@ -159,6 +159,9 @@ This analysis was completed in three major steps which are described below.
     ```
     After removing any rows with no hotel names from the `hotel_df` DataFrame and saving it as `clean_hotel_df`, a map was generated using `gmaps.configure()` to show the client each of the possible travel destinations within their weather preferences.  Within the map, an info box was created to allow the client to click on a destination marker to display a popup box which includes the name of a hotel near the city, the name of the city, the country code, the current weather description and the maximum temperature. See the script below.
     ```py
+    # Import dependencies
+    import gmaps
+    
     # Configure gmaps API key
     gmaps.configure(api_key=g_key)
     
@@ -188,13 +191,67 @@ This analysis was completed in three major steps which are described below.
     ```
     ![Travel_Destination_Map](Vacation_Search/WeatherPy_vacation_map.png)
    
-3. ) Visualize Travel Data:
-Create a heatmap with pop-up markers that can display information on specific cities based on a customer's travel preferences. Complete these steps:
- - Filter the Pandas DataFrame based on user inputs for a minimum and maximum temperature.
- - Create a heatmap for the new DataFrame.
- - Find a hotel from the cities' coordinates using Google's Maps and Places API, and Search Nearby feature.
- - Store the name of the first hotel in the DataFrame.
- - Add pop-up markers to the heatmap that display information about the city, current maximum temperature, and a hotel in the city.
+3. ) ***Creating the Travel Itinerary Map:***
+    The third and final step of the project was to create a travel itinerary map that displays the best route between four cities selected by the beta tester, along with a marker layer map that that displays the name of a hotel near the city, the name of the city, the country code, the current weather description and the maximum temperature for each of the four cities.  To create the maps, the first steps were to choose the four city destinations, create DataFrames with the data from each city and extract the latitude and longitude coordinates for each city.
+    ```py
+    # Create DataFrames for each city by filtering the 'vacation_df' using the loc method. 
+    vacation_start = vacation_df.loc[vacation_df['City'] == 'Mackay']
+    vacation_end = vacation_df.loc[vacation_df['City'] == 'Mackay']
+    vacation_stop1 = vacation_df.loc[vacation_df['City'] == 'Kiama']
+    vacation_stop2 = vacation_df.loc[vacation_df['City'] == 'Port Lincoln'] 
+    vacation_stop3 = vacation_df.loc[vacation_df['City'] == 'Alice Springs']
+       
+    # Get the latitude-longitude pairs from each city DataFrame.
+    start = vacation_start['Lat'].values[0], vacation_start['Lng'].values[0]
+    end = vacation_end['Lat'].values[0], vacation_end['Lng'].values[0]
+    stop1 = vacation_stop1['Lat'].values[0], vacation_stop1['Lng'].values[0]
+    stop2 = vacation_stop2['Lat'].values[0], vacation_stop2['Lng'].values[0]
+    stop3 = vacation_stop3['Lat'].values[0], vacation_stop3['Lng'].values[0]
+    ```
+   The Google Maps Directions API was then used to create a direction layer map showing the itinerary for traveling between for four cities as shown below.  The latitud and longitude pairs from the start and end city were used as the start and end points while the other 3 coordinate pairs for each city were used as waypoints.  The travel mode for the direction layer map was set to "Driving".
+    ```py
+    # Create a direction layer map.
+    import gmaps
+    import gmaps.datasets
+    gmaps.configure(api_key=g_key)
+
+    fig=gmaps.figure()
+    trip=gmaps.directions_layer(start, end, waypoints=(stop1, stop2, stop3), travel_mode="DRIVING")
+    fig.add_layer(trip)
+    fig
+    ```
+    ![Travel_Itinerary_Map](Vacation_Itinerary/WeatherPy_travel_map.png)
+   
+    The final step of the project was to create a marker layer map for the four destination cities on the travel itinerary.  To do this, the four city dataframes were first combined into a new DataFrame called 'itinerary_df'.  The Google Maps Directions API was then used once again to create the layer map.  The info box was configured to display the same information as in the travel destinations map from the second step of the project.
+    ```py
+    #  Combine the four city DataFrames into one DataFrame using the concat() function.
+    itinerary_df = pd.concat([vacation_start, vacation_stop1, vacation_stop2, vacation_stop3],ignore_index=True)
+    
+    # Using the template add city name, the country code, the weather description and maximum temperature for the city. 
+    info_box_template = """
+    <dl>
+    <dt>Hotel Name</dt><dd>{Hotel Name}</dd>
+    <dt>City</dt><dd>{City}</dd>
+    <dt>Country</dt><dd>{Country}</dd>
+    <dt>Weather Description</dt><dd>{Current Description} and {Max Temp} °F</dd>
+    </dl>
+    """
+    
+    # Get the data from each row and add it to the formatting template and store the data in a list.
+    hotel_info = [info_box_template.format(**row) for index, row in itinerary_df.iterrows()]
+
+    # Get the latitude and longitude from each row and store in a new DataFrame.
+    locations = itinerary_df[["Lat", "Lng"]]
+    
+    # Add a marker layer for each city to the map.
+    fig = gmaps.figure(center=(-25, 140), zoom_level=4.0)
+    marker_layer = gmaps.marker_layer(locations, info_box_content=hotel_info)
+    fig.add_layer(marker_layer)
+
+    # Display the figure
+    fig    
+    ```
+    ![Travel_Map_Markers](Vacation_Itinerary/WeatherPy_travel_map_markers.png)
  
  ## Summary
 Create scatter plots of the weather data for the following comparisons:
