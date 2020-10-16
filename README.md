@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A coworker at PlanMyTrip requested help in collecting and analyzing weather data across over 500 cities worldwide to be used for recommending ideal hotels to their customers based on the clients' weather preferences.  Specifically, the coworker requested that the Google Maps and Places API and Search Nearby features be used to create a travel destinations map and travel itinerary map which display the following information about each city:
+A coworker at PlanMyTrip requested help in collecting and analyzing weather data across over 500 cities worldwide to be used for recommending ideal hotels to their customers based on the client's weather preferences.  Specifically, the coworker requested that the Google Maps and Places API and Search Nearby features be used to create a travel destinations map and travel itinerary map which display the following information about each city:
 
 1. Name of a Hotel in the City
 2. City Name
@@ -50,7 +50,7 @@ This analysis was completed in three major steps which are described below.
         if city not in cities:
             cities.append(city)
     ```
-    To find the weather data for each city, the OpenWeatherMap API was used to request the current weather data from each unique city in the `cities` list as shown below.  The JSON data that was retreived from the API request was then parsed to the collect the latitude, longitude, country code, maximum temperature, humidity, cloudiness, wind speed, and current weather description.  The collected data was saved to a new DataFrame named `city_data_df.`
+    To find the weather data for each city, the OpenWeatherMap API was used to request the current weather data from each unique city in the `cities` list as shown below.  The JSON data that was retreived from the API request was then parsed to collect the latitude, longitude, country code, maximum temperature, humidity, cloudiness, wind speed, and current weather description.  The collected data was saved to a new DataFrame named `city_data_df.`
     ```py
     # Import the dependencies.
     import pandas as pd
@@ -63,7 +63,7 @@ This analysis was completed in three major steps which are described below.
     url = "https://api.openweathermap.org/data/2.5/weather?units=Imperial&APPID=" + weather_api_key
     print(url)
     
-    # Create an empty list ot hold the weather data.
+    # Create an empty list to hold the weather data.
     city_data = []
     
     # Loop through all the cities in our list.
@@ -208,7 +208,7 @@ This analysis was completed in three major steps which are described below.
     stop2 = vacation_stop2['Lat'].values[0], vacation_stop2['Lng'].values[0]
     stop3 = vacation_stop3['Lat'].values[0], vacation_stop3['Lng'].values[0]
     ```
-   The Google Maps Directions API was then used to create a direction layer map showing the itinerary for traveling between for four cities as shown below.  The latitud and longitude pairs from the start and end city were used as the start and end points while the other 3 coordinate pairs for each city were used as waypoints.  The travel mode for the direction layer map was set to "Driving".
+   The Google Maps Directions API was then used to create a direction layer map showing the itinerary for traveling between the four cities as shown below.  The latitude and longitude pairs from the start and end city were used as the start and end points while the other 3 coordinate pairs for each city were used as waypoints.  The travel mode for the direction layer map was set to "Driving".
     ```py
     # Create a direction layer map.
     import gmaps
