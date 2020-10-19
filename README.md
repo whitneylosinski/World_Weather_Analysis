@@ -12,7 +12,7 @@ A coworker at PlanMyTrip requested help in collecting and analyzing weather data
 
 ## Resources
 
- - Data source: schools_complete.csv & students_complete.csv
+ - Data: OpenWeatherMap API, Google Maps API 
  - Software: Python 3.8, Anaconda Navigator (anaconda3), Jupyter Notebook (anaconda3)
 
 ## Results:
